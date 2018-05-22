@@ -1,0 +1,22 @@
+# Uncomment the next line to define a global platform for your project
+
+platform :ios, '8.0'
+inhibit_all_warnings!
+
+target 'WisdomCompound_APP' do
+
+pod 'Masonry'#自动布局（代码实现）
+
+pod 'YYModel' #字典转模型
+
+pod 'AFNetworking' , '~>3.1.0' #网络请求
+
+pod 'SDWebImage', '4.0.0' #图片加载
+
+pod 'MJRefresh' #分页刷新
+
+pod 'IQKeyboardManager' #键盘回收
+
+pod 'XLsn0wTextCarousel' #跑马灯
+
+end
