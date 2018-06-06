@@ -30,6 +30,7 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf setTitle:[NSString stringWithFormat:@"%@%@",timeStr,unitTitle] forState:UIControlStateDisabled];
                 [weakSelf setBackgroundImage:[UIImage createImageWithColor:[UIColor colorWithHexString:@"#F5F5F5"]] forState:UIControlStateDisabled];
+            
                 weakSelf.enabled = NO;
             });
             remainTime--;

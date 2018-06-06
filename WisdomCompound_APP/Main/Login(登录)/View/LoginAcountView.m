@@ -8,19 +8,18 @@
 
 #import "LoginAcountView.h"
 #import "CountDownButton.h"
+#import "NSString+Extension.h"
 
-@interface LoginAcountView ()
+@interface LoginAcountView ()<UITextFieldDelegate>
 /** 账号  */
 @property (nonatomic,strong) UIImageView *img_phone;
-/** 手机号文本框  */
-@property (nonatomic,strong) UITextField *tf_phone;
+
 /** 下划线  */
 @property (nonatomic,strong) UIView *line1;
 
 /** 验证码  */
 @property (nonatomic,strong) UIImageView *img_code;
-/** 验证码文本框  */
-@property (nonatomic,strong) UITextField *tf_code;
+
 /** 下划线  */
 @property (nonatomic,strong) UIView *line2;
 
@@ -53,6 +52,8 @@
     _tf_phone = ({
         UITextField *phonetf = [[UITextField alloc]init];
         phonetf.placeholder = @"请输入手机号";
+        phonetf.delegate = self;
+        phonetf.keyboardType = UIKeyboardTypeNumberPad;
         phonetf.textColor = [UIColor colorWithHexString:TextColor_33];
         phonetf.font = FONT(15);
         [self addSubview:phonetf];
@@ -62,7 +63,7 @@
     _line1 = ({
        
         UIView *line1 = [[UIView alloc]init];
-        line1.backgroundColor = [UIColor colorWithHexString:lineColor];
+        line1.backgroundColor = [UIColor colorWithHexString:KlineColor];
         [self addSubview:line1];
         line1;
     });
@@ -77,7 +78,9 @@
     
     _tf_code = ({
         UITextField *codetf = [[UITextField alloc]init];
+        codetf.delegate = self;
         codetf.placeholder = @"请输入验证码";
+        codetf.keyboardType = UIKeyboardTypeNumberPad;
         codetf.textColor = [UIColor colorWithHexString:TextColor_33];
         codetf.font = FONT(15);
         [self addSubview:codetf];
@@ -87,7 +90,7 @@
     _line2 = ({
         
         UIView *line2 = [[UIView alloc]init];
-        line2.backgroundColor = [UIColor colorWithHexString:lineColor];
+        line2.backgroundColor = [UIColor colorWithHexString:KlineColor];
         [self addSubview:line2];
         line2;
     });
@@ -97,6 +100,7 @@
         CountDownButton *countDownBtn = [[CountDownButton alloc]init];
         countDownBtn.titleLabel.font = FONT(13);
         [countDownBtn setTitleColor:[UIColor colorWithHexString:TextColor_ff] forState:UIControlStateNormal];
+        [countDownBtn setTitleColor:[UIColor colorWithHexString:TextColor_33] forState:UIControlStateSelected];
         [countDownBtn setTitle:@"获取验证码" forState:UIControlStateNormal];
         countDownBtn.backgroundColor = [UIColor colorWithHexString:MainBlueColor];
         XBViewBorderRadius(countDownBtn, 15, 0, [UIColor clearColor]);
@@ -111,12 +115,87 @@
 }
 
 - (void)countDownAction {
-    
-    [self.btn_getCode countDownFromTime:60 unitTitle:@"s" completion:^(CountDownButton *countDownButton) {
-        [countDownButton setTitle:@"重新获取" forState:UIControlStateNormal];
-    }];
+    [self getVecode];
+ 
     
     
+}
+
+
+- (void)getVecode {
+    
+    if (![self errorLoginRemind]) {
+        NSString *timetempl = [NSString getTimestampByFormatter];
+        NSString *signBefore = [NSString stringWithFormat:@"%@%@%@%@", _tf_phone.text, timetempl, terminal_KEY, SEND_VER_CODE_KEY];
+        NSString *sign = [NSString MD5:signBefore];
+        NSDictionary *params = @{
+                                 @"mobilePhone" : _tf_phone.text,
+                                 @"type" : terminal_KEY,
+                                 @"sign" : sign,
+                                 @"time" : timetempl,
+                                 };
+        
+        [HUDHelper showHud];
+        [XBNetwork POSTWithURL:k_api_sendVerificationCode parameters:params cachePolicy:0 callback:^(id responseObject, NSError *error) {
+            [HUDHelper hideHud];
+            int code = [responseObject[@"code"] intValue];
+            if (code == 1) {
+                [self.btn_getCode setTitleColor:[UIColor colorWithHexString:TextColor_33] forState:UIControlStateNormal];
+                [self.btn_getCode countDownFromTime:60 unitTitle:@"s" completion:^(CountDownButton *countDownButton) {
+                    [countDownButton setTitle:@"重新获取" forState:UIControlStateNormal];
+                }];
+            }else if (code == 2) {
+                
+            }
+            
+        }];
+    }
+}
+
+
+
+//手机号验证
+- (BOOL)errorLoginRemind {
+    
+    if ([_tf_phone.text isEqualToString:@""]) {
+        [HUDHelper showToastWithMessage:@"请先输入您的手机号,再获取验证码"];
+        return YES;
+    }else if (![NSString checkMobile:_tf_phone.text]) {
+       [HUDHelper showToastWithMessage:@"您输入的手机号有误,请重新输入"];
+        return YES;
+    }
+    return NO;
+}
+
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    
+    if (textField == self.tf_phone) {
+        //这里的if时候为了获取删除操作,如果没有次if会造成当达到字数限制后删除键也不能使用的后果.
+        if (range.length == 1 && string.length == 0) {
+            return YES;
+        }
+        //so easy
+        else if (self.tf_phone.text.length >= 11) {
+            self.tf_phone.text = [textField.text substringToIndex:11];
+            return NO;
+        }
+    }
+    
+    
+    if (textField == self.tf_code) {
+        //这里的if时候为了获取删除操作,如果没有次if会造成当达到字数限制后删除键也不能使用的后果.
+        if (range.length == 1 && string.length == 0) {
+            return YES;
+        }
+        //so easy
+        else if (self.tf_code.text.length >= 4) {
+            self.tf_code.text = [textField.text substringToIndex:4];
+            return NO;
+        }
+    }
+    
+    return YES;
 }
 
 

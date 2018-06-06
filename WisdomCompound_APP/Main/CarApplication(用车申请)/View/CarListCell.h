@@ -8,6 +8,18 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol CarListCellDelegate<NSObject>
+
+- (void)selectCarWithIndexPath:(NSIndexPath *)indexPath;
+
+@end
+
 @interface CarListCell : UITableViewCell
+
+@property (nonatomic,weak) id<CarListCellDelegate> delegate;
+
+
+/** <#注释#>  */
+@property (nonatomic,strong) NSIndexPath *indexPath;
 
 @end

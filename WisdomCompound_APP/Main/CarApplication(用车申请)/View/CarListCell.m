@@ -30,14 +30,6 @@
 
 
 
-- (void)setUI {
-    
-    
-    
-    
-}
-
-
 - (void)layoutSubviews {
     
     [super layoutSubviews];
@@ -65,5 +57,8 @@
 }
 
 - (IBAction)userCarApplyAction:(UIButton *)sender {
+    if (_delegate && [_delegate respondsToSelector:@selector(selectCarWithIndexPath:)]) {
+        [_delegate selectCarWithIndexPath:self.indexPath];
+    }
 }
 @end

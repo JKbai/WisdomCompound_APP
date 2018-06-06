@@ -87,6 +87,7 @@
     _btn_more = ({
         UIButton *more = [UIButton buttonWithType:UIButtonTypeSystem];
         [more setTitleColor:[UIColor colorWithHexString:TextColor_33] forState:UIControlStateNormal];
+        [more addTarget:self action:@selector(moreAction) forControlEvents:UIControlEventTouchUpInside];
         [more setTitle:@"更多" forState:UIControlStateNormal];
         more.titleLabel.font = FONT(12);
         [self addSubview:more];
@@ -98,21 +99,27 @@
     
 }
 
+- (void)moreAction {
+    if (_delegate && [_delegate respondsToSelector:@selector(selectMore)]) {
+        [_delegate selectMore];
+    }
+}
+
 
 - (void)handleTopEventWithURLString:(NSString *)URLString {
-    XBLog(@"URLString===%@", URLString);
+//    XBLog(@"URLString===%@", URLString);
 }
 
 - (void)getTopDataSourceModel:(DataSourceModel *)topDataSourceModel {
-    XBLog(@"第一个 %@ %@ %@", topDataSourceModel.type, topDataSourceModel.title, topDataSourceModel.URLString);
+//    XBLog(@"第一个 %@ %@ %@", topDataSourceModel.type, topDataSourceModel.title, topDataSourceModel.URLString);
 }
 
 - (void)getBottomDataSourceModel:(DataSourceModel *)bottomDataSourceModel {
-    XBLog(@"第二个 %@ %@ %@", bottomDataSourceModel.type, bottomDataSourceModel.title, bottomDataSourceModel.URLString);
+//    XBLog(@"第二个 %@ %@ %@", bottomDataSourceModel.type, bottomDataSourceModel.title, bottomDataSourceModel.URLString);
 }
 
 - (void)handleBottomEventWithURLString:(NSString *)URLString {
-    XBLog(@"URLString===%@", URLString);
+//    XBLog(@"URLString===%@", URLString);
 }
 
 

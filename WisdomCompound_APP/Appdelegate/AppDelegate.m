@@ -9,6 +9,9 @@
 #import "AppDelegate.h"
 #import "HomeMainController.h"
 #import "BaseNavigationController.h"
+
+#import "CommonControlCache.h"
+#import "CommonControlModel.h"
 @interface AppDelegate ()
 
 @end
@@ -17,7 +20,11 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+      //设置window的根控制器
       [self configRootViewController];
+    
+      //获取公共配置数据
+      [self getCommonControlData];
     return YES;
 }
 
@@ -35,8 +42,26 @@
     self.window.rootViewController = navi;
     [self.window makeKeyAndVisible];
     
+}
+
+
+/**
+ 获取公共配置数据
+ */
+- (void)getCommonControlData {
+    
+    [CommonControlCache updateCacheWithSuccess:^{
+        
+        XBLog(@"数据缓存成功");
+       
+    } error:^(NSString *err) {
+        [self getCommonControlData];
+    }];
     
 }
+
+
+
 
 
 @end

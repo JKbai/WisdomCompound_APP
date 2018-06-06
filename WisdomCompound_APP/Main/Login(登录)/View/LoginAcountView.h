@@ -10,4 +10,10 @@
 
 @interface LoginAcountView : UIView
 
+/** 手机号文本框  */
+@property (nonatomic,strong) UITextField *tf_phone;
+
+/** 验证码文本框  */
+@property (nonatomic,strong) UITextField *tf_code;
+
 @end

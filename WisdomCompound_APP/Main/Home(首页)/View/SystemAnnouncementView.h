@@ -8,6 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol SystemAnnouncementViewDelegate<NSObject>
+
+- (void)selectMore;
+
+@end
+
 @interface SystemAnnouncementView : UIView
+
+@property (nonatomic,weak) id<SystemAnnouncementViewDelegate> delegate;
 
 @end
